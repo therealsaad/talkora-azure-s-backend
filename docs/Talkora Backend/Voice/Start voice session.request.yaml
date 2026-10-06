@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/voice/sessions"
+method: POST
+headers:
+  Authorization: Bearer {{studentToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: "{}"
+order: 1000

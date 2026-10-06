@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/students"
+method: POST
+headers:
+  Authorization: Bearer {{schoolToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "fullName": "New Student",
+      "rollNumber": "99",
+      "grade": 4,
+      "className": "4A"
+    }
+order: 2000

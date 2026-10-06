@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/progress/classes/{{classId}}"
+method: GET
+headers:
+  Authorization: Bearer {{studentToken}}
+order: 2000

@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/student/school"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "schoolCode": "{{schoolCode}}"
+    }
+order: 3000

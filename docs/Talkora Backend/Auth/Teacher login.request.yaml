@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/teacher/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "{{teacherEmail}}",
+      "password": "{{teacherPassword}}"
+    }
+order: 2000

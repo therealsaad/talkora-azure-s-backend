@@ -1,0 +1,15 @@
+$kind: collection
+description: Talkora backend API — auth, curriculum, progress, achievements, AI (Miss Julie), voice.
+variables:
+  baseUrl: http://localhost:5000/api
+  schoolToken: ""
+  teacherToken: ""
+  studentToken: ""
+  schoolCode: DEMO001
+  schoolPassword: talkora123
+  teacherEmail: teacher@demo.talkora.dev
+  teacherPassword: teacher123
+  studentId: ""
+  studentCode: ""
+  activityId: ""
+  classId: ""

@@ -1,0 +1,22 @@
+name: Talkora Local
+values:
+  - key: base_url
+    value: 'http://localhost:5000'
+    enabled: true
+    type: default
+  - key: school_code
+    value: DEMO001
+    enabled: true
+    type: default
+  - key: student_id
+    value: 6a82e2e33f8973229f326322
+    enabled: true
+    type: default
+  - key: student_code
+    value: DEMO
+    enabled: true
+    type: secret
+  - key: auth_token
+    value: ''
+    enabled: true
+    type: secret

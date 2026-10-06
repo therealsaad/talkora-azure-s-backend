@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/students/:id"
+method: PATCH
+headers:
+  Authorization: Bearer {{schoolToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "className": "4B"
+    }
+order: 3000

@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/auth/student/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "schoolCode": "{{schoolCode}}",
+      "studentId": "{{studentId}}",
+      "studentCode": "{{studentCode}}"
+    }
+order: 4000

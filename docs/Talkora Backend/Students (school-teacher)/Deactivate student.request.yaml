@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/students/:id/deactivate"
+method: POST
+headers:
+  Authorization: Bearer {{schoolToken}}
+order: 4000

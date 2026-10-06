@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/progress/activities/{{activityId}}/attempts"
+method: POST
+headers:
+  Authorization: Bearer {{studentToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "answer": "CAT",
+      "startedAt": "2026-01-01T00:00:00.000Z",
+      "hintsUsed": 0
+    }
+order: 1000

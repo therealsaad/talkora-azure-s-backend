@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/ai/miss-julie"
+method: POST
+headers:
+  Authorization: Bearer {{studentToken}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "message": "I don't understand this word",
+      "context": "hint"
+    }
+order: 1000
