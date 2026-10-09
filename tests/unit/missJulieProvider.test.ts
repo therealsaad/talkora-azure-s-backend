@@ -1,25 +1,24 @@
 import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import { Types } from 'mongoose'
 import { Conversation } from '../../src/models/Conversation'
-import { GroqProvider } from '../../src/providers/ai/GroqProvider'
-import { QwenProvider } from '../../src/providers/ai/QwenProvider'
+import { GeminiConversationProvider } from '../../src/providers/ai/GeminiConversationProvider'
 import { env } from '../../src/config/env'
 import { MemoryService } from '../../src/services/memory.service'
 import { MissJulieService } from '../../src/services/missJulie.service'
 import { StudentContextService } from '../../src/services/student-context.service'
 
-describe('Miss Julie live conversation provider', () => {
+describe('Miss Julie free-talk conversation provider', () => {
   afterEach(() => {
     jest.restoreAllMocks()
   })
 
-  it('uses the configured Groq brain for a student conversation turn', async () => {
+  it('uses the configured Gemini brain for a free-talk student turn', async () => {
     const studentId = new Types.ObjectId().toString()
     const conversationId = new Types.ObjectId()
     const previousNodeEnv = env.nodeEnv
     const previousAiProvider = env.aiProvider
     env.nodeEnv = 'development'
-    env.aiProvider = 'groq'
+    env.aiProvider = 'mock'
 
     jest.spyOn(StudentContextService, 'buildContext').mockResolvedValue({
       studentName: 'Aarav',
@@ -53,19 +52,11 @@ describe('Miss Julie live conversation provider', () => {
     } as never)
     jest.spyOn(MemoryService, 'persistVerifiedPersonalFacts').mockResolvedValue([])
 
-    const groq = jest.spyOn(GroqProvider.prototype, 'generate').mockResolvedValue({
-      message: 'Groq heard your cricket answer.',
+    const gemini = jest.spyOn(GeminiConversationProvider.prototype, 'generate').mockResolvedValue({
+      message: 'Cricket is a fun team game.',
       emotion: 'encouraging',
       corrections: [],
       followUpQuestion: 'Who do you play with?',
-      memoryUpdates: [],
-      xpAwarded: 0,
-    })
-    const qwen = jest.spyOn(QwenProvider.prototype, 'generate').mockResolvedValue({
-      message: 'This reply came from Qwen.',
-      emotion: 'encouraging',
-      corrections: [],
-      followUpQuestion: null,
       memoryUpdates: [],
       xpAwarded: 0,
     })
@@ -76,13 +67,13 @@ describe('Miss Julie live conversation provider', () => {
         inputMode: 'TEXT',
       })
 
-      expect(response.message).toBe('Groq heard your cricket answer.')
+      expect(response.message).toBe('Cricket is a fun team game.')
       expect(response.followUpQuestion).toBe('Who do you play with?')
+      expect(gemini).toHaveBeenCalledTimes(1)
     } finally {
       env.nodeEnv = previousNodeEnv
       env.aiProvider = previousAiProvider
-      groq.mockRestore()
-      qwen.mockRestore()
+      gemini.mockRestore()
     }
   })
 })

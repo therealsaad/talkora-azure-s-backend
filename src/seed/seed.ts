@@ -635,7 +635,7 @@ async function seed() {
           isClass4 &&
           i <
             TERM_ONE_CONFIG.length
-        const unitTwoCurriculumVersion = 'class4-unit2-partner-v2'
+        const unitTwoCurriculumVersion = 'class4-unit2-partner-v3'
         const existingLevel =
           isClass4 && unitNumber === 2
             ? await Level.findOne({
@@ -1027,6 +1027,19 @@ async function seed() {
               { $set: { order: -(600_000 + index), status: 'archived', 'metadata.archivedBy': 'class4-unit1-favourites-v4' } },
             )
           }
+        } else if (unitNumber === 2) {
+          const retiredUnitTwoRows = await Activity.find({
+            lessonId: lesson._id,
+            order: { $gt: 0 },
+            activityKey: { $nin: activeActivityKeys },
+          }).select('_id order').lean()
+
+          for (let index = 0; index < retiredUnitTwoRows.length; index += 1) {
+            await Activity.updateOne(
+              { _id: retiredUnitTwoRows[index]!._id },
+              { $set: { order: -(700_000 + index), status: 'archived', 'metadata.archivedBy': 'class4-unit2-partner-v3' } },
+            )
+          }
         }
 
         for (
@@ -1078,7 +1091,7 @@ async function seed() {
 
               curriculumVersion:
                 unitNumber === 2 &&
-                activityKey.startsWith('class4-unit2-partner-v2-')
+                activityKey.startsWith('class4-unit2-partner-v3-')
                   ? unitTwoCurriculumVersion
                   : CURRICULUM_VERSION,
 

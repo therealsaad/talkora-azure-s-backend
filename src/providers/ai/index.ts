@@ -16,8 +16,10 @@ export function getAIProvider(): AIProvider {
       return new GroqProvider()
     case 'openai':
       return new OpenAIProvider()
-    default:
+    case 'mock':
       return new MockAIProvider()
+    default:
+      throw new Error(`Unsupported AI_PROVIDER: ${String(env.aiProvider)}`)
   }
 }
 

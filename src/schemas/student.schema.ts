@@ -4,7 +4,7 @@ export const createStudentSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100),
     rollNumber: z.string().trim().min(1).max(20),
-    grade: z.number().int().min(4).max(10),
+    grade: z.number().int().min(0).max(10),
     className: z.string().trim().max(20).optional(),
     teacherId: z.string().optional(),
     avatar: z.string().optional(),
@@ -16,7 +16,7 @@ export const updateStudentSchema = z.object({
   body: z.object({
     fullName: z.string().trim().min(2).max(100).optional(),
     rollNumber: z.string().trim().min(1).max(20).optional(),
-    grade: z.number().int().min(4).max(10).optional(),
+    grade: z.number().int().min(0).max(10).optional(),
     className: z.string().trim().max(20).optional(),
     teacherId: z.string().optional(),
     avatar: z.string().optional(),
@@ -36,7 +36,7 @@ export const updateStudentAvatarSchema = z.object({
 export const listStudentsQuerySchema = z.object({
   query: z.object({
     search: z.string().optional(),
-    grade: z.coerce.number().int().min(4).max(10).optional(),
+    grade: z.coerce.number().int().min(0).max(10).optional(),
     className: z.string().optional(),
     status: z.enum(['active', 'inactive']).optional(),
     page: z.coerce.number().int().min(1).default(1),

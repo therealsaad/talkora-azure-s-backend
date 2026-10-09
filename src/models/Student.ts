@@ -8,7 +8,9 @@ export interface IStudent extends Document {
   rollNumber: string
   studentCode?: string // legacy field; excluded from normal queries and no longer written
   passwordHash: string
-  grade: number // 4-10
+  pinLookup?: string
+  authVersion: number
+  grade: number // 0 = KG, 1-10 = grades
   className?: string // e.g. "4A" — display/section label, distinct from grade
   avatar?: string
   avatarType: 'BOY' | 'GIRL'
@@ -26,7 +28,9 @@ const studentSchema = new Schema<IStudent>(
     rollNumber: { type: String, required: true, trim: true },
     studentCode: { type: String, trim: true, uppercase: true, select: false },
     passwordHash: { type: String, required: true, select: false },
-    grade: { type: Number, required: true, min: 4, max: 10 },
+    pinLookup: { type: String, select: false },
+    authVersion: { type: Number, default: 0 },
+    grade: { type: Number, required: true, min: 0, max: 10 },
     className: { type: String, trim: true },
     avatar: { type: String },
     avatarType: { type: String, enum: ['BOY', 'GIRL'], required: true, default: 'BOY' },
@@ -36,6 +40,7 @@ const studentSchema = new Schema<IStudent>(
   { timestamps: true },
 )
 
+studentSchema.index({ pinLookup: 1 }, { unique: true, partialFilterExpression: { pinLookup: { $type: 'string' } } })
 studentSchema.index({ schoolId: 1, rollNumber: 1 }, { unique: true })
 studentSchema.index({ schoolId: 1, fullName: 1 })
 studentSchema.index({ schoolId: 1, grade: 1, className: 1, fullName: 1 })

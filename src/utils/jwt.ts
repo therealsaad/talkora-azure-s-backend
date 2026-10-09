@@ -7,10 +7,11 @@ export interface TokenPayload {
   sub: string // the authenticated entity's Mongo _id (school, teacher, or student)
   role: Role
   schoolId: string
+  sv?: number // student session version; absent on legacy tokens = 0
 }
 
 export function signToken(payload: TokenPayload): string {
-  const options: SignOptions = { expiresIn: env.jwtExpiresIn as SignOptions['expiresIn'] }
+  const options: SignOptions = { expiresIn: (payload.role === 'STUDENT' ? '90m' : env.jwtExpiresIn) as SignOptions['expiresIn'] }
   return jwt.sign(payload, env.jwtSecret, options)
 }
 

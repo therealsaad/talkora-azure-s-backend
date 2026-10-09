@@ -158,8 +158,28 @@ function unit2Source(label: string) {
 }
 
 const unit2AuthoredActivities: A[] = [
+  {
+    ...base,
+    order: 1,
+    stage: 'WARM_UP',
+    type: 'CONVERSATION',
+    title: 'Turn and Talk with Your Partner',
+    prompt: 'Take turns asking your partner: What is your name? How are you feeling today? Are you excited for the new unit?',
+    instruction: 'Ask one question at a time. Listen to your partner and take turns.',
+    target: 'What is your name? How are you feeling today? Are you excited for the new unit?',
+    xp: 15,
+    voiceEnabled: true,
+    aiEnabled: true,
+    metadata: unit2Metadata('PARTNER_WARM_UP', {
+      conversationMode: 'OPEN',
+      micMode: true,
+      allowMic: true,
+      followUpEnabled: false,
+    }),
+    source: unit2Source('Turn and talk warm-up'),
+  },
   choice(
-    1,
+    3,
     'PRACTICE_ZONE',
     'A Kind First Question',
     'Which polite question helps you learn about a new partner?',
@@ -203,7 +223,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...base,
-    order: 3,
+    order: 4,
     stage: 'LISTEN_REPEAT',
     type: 'REPEAT_SENTENCE',
     title: 'Practise an Interview Question',
@@ -225,7 +245,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...choice(
-      4,
+      8,
       'PRACTICE_ZONE',
       'Check What You Heard',
       'Maya said her hobby is drawing. What can you ask to check your notes?',
@@ -241,12 +261,12 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...base,
-    order: 5,
+    order: 6,
     stage: 'INTERACT',
     type: 'CONVERSATION',
-    title: 'Interview Your Practice Partner',
-    prompt: 'Pretend Miss Julie is your practice partner. Ask about her name, age, favourite food, after-school activity, hobby and best friend.',
-    instruction: 'Ask one question at a time. Listen to the answer and use a full question.',
+    title: 'Interview Your Partner',
+    prompt: 'Take turns interviewing your partner. Ask about their name, age, favourite food, after-school activity, hobby and best friend.',
+    instruction: 'Ask one question at a time, listen carefully and write down your partner’s answers. Spelling does not need to be perfect.',
     target: 'Ask your partner questions to learn six facts.',
     xp: 25,
     voiceEnabled: true,
@@ -277,7 +297,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...choice(
-      6,
+      9,
       'FOLLOW_UP',
       'Verify a Partner Fact',
       'You wrote that Maya likes playing with her dog after school. What should you do before making the poster?',
@@ -293,7 +313,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...base,
-    order: 7,
+    order: 10,
     stage: 'PRACTICE_ZONE',
     type: 'SENTENCE_BUILDER',
     title: 'Build a True Poster Sentence',
@@ -315,7 +335,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...speak(
-      8,
+      11,
       'PRESENT',
       'Add More Partner Details',
       'Add your partner’s after-school activity, hobby and best friend to the poster.',
@@ -327,7 +347,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...choice(
-      9,
+      13,
       'PRESENT',
       'Ready to Present',
       'What helps your class understand your poster?',
@@ -343,7 +363,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...speak(
-      10,
+      16,
       'FINAL_CHALLENGE',
       'Partner Presenter Challenge',
       'Introduce your partner in an organised short speech. Begin with their name, share checked details and finish politely.',
@@ -355,7 +375,7 @@ const unit2AuthoredActivities: A[] = [
   },
   {
     ...speak(
-      11,
+      17,
       'FINAL_TALK',
       'Present Your Partner',
       'Present your “All About” poster. Speak clearly, look at your audience and use your notes only when needed.',
@@ -367,11 +387,97 @@ const unit2AuthoredActivities: A[] = [
   },
 ]
 
-export const unit2PartnerActivities = unit2AuthoredActivities.map((activity) => ({
+const unit2AddedActivities: A[] = [
+  {
+    ...speak(
+      5,
+      'SPEAK',
+      'Practise Interview Questions and Answers',
+      'Practise asking and answering: “[Name], how old are you?” “I am ___ years old.” “What is your favourite food?” “My favourite food is ___.” “What is your hobby?” “My hobby is ___.” “Who is your best friend?” “My best friend is ___.” Finish by saying, “Thank you for answering my questions.”',
+      'I am ___ years old. My favourite food is ___. My hobby is ___. My best friend is ___. Thank you for answering my questions.',
+      'GUIDED_INTERVIEW',
+      'CONTROLLED',
+    ),
+    source: unit2Source('Guided interview practice'),
+  },
+  {
+    ...speak(
+      7,
+      'PRACTICE_ZONE',
+      'Describe Your Partner',
+      'Use full sentences to describe your partner: “My best friend is ___.” “He/She is funny, kind or smart.” “We like to ___.”',
+      'My best friend is ___. He/She is kind. We like to ___.',
+      'PARTNER_DESCRIPTION',
+      'CONTROLLED',
+    ),
+    source: unit2Source('Describe your friend'),
+  },
+  {
+    ...base,
+    order: 12,
+    stage: 'LISTEN_REPEAT',
+    type: 'LISTEN_MODEL',
+    title: 'Listen to a Partner Presentation',
+    prompt: 'Listen to the model presentation. Notice how the speaker organises checked information into full sentences.',
+    target: 'Hello, everyone! This is my partner. Her name is Maya. She is nine years old. Her favourite food is dosa. Her hobby is drawing. After school she likes playing with her dog. Her best friend is Anaya. Thank you.',
+    xp: 15,
+    voiceEnabled: true,
+    aiEnabled: false,
+    content: {
+      dialogueTurns: [
+        { role: 'modelStudent', text: 'Hello, everyone!' },
+        { role: 'modelStudent', text: 'This is my partner.' },
+        { role: 'modelStudent', text: 'Her name is Maya.' },
+        { role: 'modelStudent', text: 'She is nine years old.' },
+        { role: 'modelStudent', text: 'Her favourite food is dosa.' },
+        { role: 'modelStudent', text: 'Her hobby is drawing.' },
+        { role: 'modelStudent', text: 'After school she likes playing with her dog.' },
+        { role: 'modelStudent', text: 'Her best friend is Anaya.' },
+        { role: 'modelStudent', text: 'Thank you.' },
+      ],
+    },
+    metadata: unit2Metadata('PARTNER_PRESENTATION_MODEL', {
+      conversationMode: 'CONTROLLED',
+      listenOnly: true,
+    }),
+    source: unit2Source('Partner presentation model'),
+  },
+  {
+    ...speak(
+      14,
+      'PRESENT',
+      'Present Your Poster with Support',
+      'Use your “All About My Partner” poster and these sentence starters. Point to each part, use he/his or she/her correctly, then try again without reading.',
+      'Hello, everyone! This is my partner. His/Her name is ___. He/She is ___ years old. His/Her favourite food is ___. His/Her hobby is ___. After school he/she likes to ___. His/Her best friend is ___. Thank you.',
+      'GUIDED_PARTNER_PRESENTATION',
+      'CONTROLLED',
+    ),
+    source: unit2Source('Present to your partner'),
+  },
+  {
+    ...speak(
+      15,
+      'PRESENT',
+      'Practise with a Small Group',
+      'Take turns presenting your partner. Listen quietly. After each presentation, share one thing the speaker did well and one kind tip to improve.',
+      'I listened respectfully. You spoke clearly. One tip is to look at the audience.',
+      'SMALL_GROUP_PRESENTATION',
+      'CONTROLLED',
+    ),
+    source: unit2Source('Present to a small group'),
+  },
+]
+
+export const unit2PartnerActivities = [
+  ...unit2AuthoredActivities,
+  ...unit2AddedActivities,
+]
+  .sort((left, right) => left.order - right.order)
+  .map((activity) => ({
   ...activity,
-  activityKey: `class4-unit2-partner-v2-activity${activity.order}`,
+  activityKey: `class4-unit2-partner-v3-activity${activity.order}`,
   source: activity.source || unit2Source(activity.title),
-}))
+  }))
 
 export const unit3OrderActivities: A[] = [
   choice(1,'WARM_UP','Taste and texture','Which word describes a crispy dosa?',['crispy','sleepy','late'],'crispy','IMAGE_CHOICE'),

@@ -1,7 +1,7 @@
 import { FilterQuery, Types } from 'mongoose'
 import { Student, IStudent } from '../models/Student'
 import { hashPassword } from '../utils/password'
-import { generateCode } from '../utils/idGenerator'
+import { newUniquePin } from '../utils/student-pin'
 import { ApiError } from '../utils/ApiError'
 import { Progress } from '../models/Progress'
 import { ActivityAttempt } from '../models/ActivityAttempt'
@@ -31,7 +31,7 @@ export const StudentService = {
   async list(params: ListStudentsParams) {
     const filter: FilterQuery<IStudent> = { schoolId: params.schoolId }
     if (params.teacherId) filter.teacherId = params.teacherId
-    if (params.grade) filter.grade = params.grade
+    if (params.grade !== undefined) filter.grade = params.grade
     if (params.className) filter.className = params.className
     if (params.status) filter.status = params.status
     if (params.search) {
@@ -99,7 +99,7 @@ export const StudentService = {
 
   async create(schoolId: string, input: { fullName: string; rollNumber: string; grade: number; className?: string; teacherId?: string; avatar?: string; avatarType: 'BOY' | 'GIRL' }) {
     await assertTeacherInSchool(schoolId, input.teacherId)
-    const studentCode = generateCode(4)
+    const { pin: studentCode, digest: pinLookup } = await newUniquePin()
     const passwordHash = await hashPassword(studentCode)
 
     try {
@@ -113,6 +113,7 @@ export const StudentService = {
         avatar: input.avatar,
         avatarType: input.avatarType,
         passwordHash,
+        pinLookup,
       })
       // studentCode is returned once, in plaintext, at creation time only — like a temporary password.
       return { student, studentCode }
@@ -148,9 +149,9 @@ export const StudentService = {
   },
 
   async resetCode(schoolId: string, id: string, teacherId?: string) {
-    const studentCode = generateCode(4)
+    const { pin: studentCode, digest: pinLookup } = await newUniquePin(id)
     const passwordHash = await hashPassword(studentCode)
-    const student = await Student.findOneAndUpdate({ _id: id, schoolId, ...(teacherId ? { teacherId } : {}) }, { passwordHash }, { new: true })
+    const student = await Student.findOneAndUpdate({ _id: id, schoolId, ...(teacherId ? { teacherId } : {}) }, { $set: { passwordHash, pinLookup }, $inc: { authVersion: 1 } }, { new: true })
     if (!student) throw ApiError.notFound('Student not found')
     return { student, studentCode }
   },

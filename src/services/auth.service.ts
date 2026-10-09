@@ -5,6 +5,7 @@ import { hashPassword, comparePassword } from '../utils/password'
 import { signToken } from '../utils/jwt'
 import { ApiError } from '../utils/ApiError'
 import { generateCode } from '../utils/idGenerator'
+import { pinLookup } from '../utils/student-pin'
 
 export const AuthService = {
   async loginSchool(schoolCode: string, password: string) {
@@ -36,7 +37,7 @@ export const AuthService = {
 
     const baseFilter = { schoolId: school._id, status: 'active' as const }
     const filter: Record<string, unknown> = { ...baseFilter }
-    if (input.grade) filter.grade = input.grade
+    if (input.grade !== undefined) filter.grade = input.grade
     if (input.className) filter.className = input.className
     if (input.q) filter.fullName = { $regex: input.q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), $options: 'i' }
 
@@ -82,9 +83,24 @@ export const AuthService = {
     student.lastLoginAt = new Date()
     await student.save()
 
-    const token = signToken({ sub: student._id.toString(), role: 'STUDENT', schoolId: school._id.toString() })
+    const token = signToken({ sub: student._id.toString(), role: 'STUDENT', schoolId: school._id.toString(), sv: student.authVersion || 0 })
     return {
       token,
+      student: { id: student._id.toString(), fullName: student.fullName, rollNumber: student.rollNumber, grade: student.grade, className: student.className, avatar: student.avatar || `/talkora/characters/students/${(student.avatarType || 'BOY').toLowerCase()}/canonical.png`, avatarType: student.avatarType || 'BOY' },
+      school: { id: school._id.toString(), name: school.name, code: school.code },
+    }
+  },
+
+  /** PIN-only sign-in. Old accounts need their PIN reset by school staff first. */
+  async loginStudentByPin(pin: string) {
+    const student = await Student.findOne({ pinLookup: pinLookup(pin), status: 'active' }).select('+passwordHash')
+    if (!student || !(await comparePassword(pin, student.passwordHash))) throw ApiError.unauthorized('Invalid PIN')
+    const school = await School.findOne({ _id: student.schoolId, status: 'active' }).select('name code')
+    if (!school) throw ApiError.unauthorized('Invalid PIN')
+    student.lastLoginAt = new Date()
+    await student.save()
+    return {
+      token: signToken({ sub: student._id.toString(), role: 'STUDENT', schoolId: student.schoolId.toString(), sv: student.authVersion || 0 }),
       student: { id: student._id.toString(), fullName: student.fullName, rollNumber: student.rollNumber, grade: student.grade, className: student.className, avatar: student.avatar || `/talkora/characters/students/${(student.avatarType || 'BOY').toLowerCase()}/canonical.png`, avatarType: student.avatarType || 'BOY' },
       school: { id: school._id.toString(), name: school.name, code: school.code },
     }

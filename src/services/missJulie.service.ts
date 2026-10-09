@@ -3,6 +3,7 @@ import { Activity } from '../models/Activity'
 import { Conversation, IConversation } from '../models/Conversation'
 import { MissJulieContext } from '../providers/ai/AIProvider'
 import { getAIProvider } from '../providers/ai'
+import { GeminiConversationProvider } from '../providers/ai/GeminiConversationProvider'
 import { ApiError } from '../utils/ApiError'
 import { ProgressService } from './progress.service'
 import { detectStudentSkills, masteryFor, mergeEvidence, nextRetryState } from './pedagogy.service'
@@ -10,6 +11,7 @@ import { MemoryService } from './memory.service'
 import { MistakeService } from './mistake.service'
 import { StudentContextService } from './student-context.service'
 import { finalizeConversationTeacherResponse } from './conversationTurns'
+import { env } from '../config/env'
 
 function detectedConcepts(message: string): string[] {
   const text = message.toLowerCase()
@@ -288,9 +290,11 @@ export const MissJulieService = {
     const finalFreeTalkTurn = freeTalkConversation && nextTurn >= 5
     const finalTurn = finalLessonTurn || finalFreeTalkTurn
 
-    // The configured provider owns live student conversation. Production uses
-    // Groq; tests keep the deterministic mock provider through AI_PROVIDER.
-    const provider = getAIProvider()
+    // Free-talk practice uses Talkora's already-configured Gemini API. Lesson
+    // conversations continue using the provider selected for the lesson path.
+    const provider = freeTalkConversation && env.nodeEnv !== 'test'
+      ? new GeminiConversationProvider()
+      : getAIProvider()
     let response = await provider.generate(studentContext)
     response = finalizeConversationTeacherResponse(response, finalTurn)
     if (lessonConversation || freeTalkConversation) response.activityComplete = finalTurn
