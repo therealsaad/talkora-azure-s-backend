@@ -45,6 +45,9 @@ export const env = {
   groqTtsVocalPrefix: process.env.GROQ_TTS_VOCAL_PREFIX ?? '[warm, gentle, cheerful Indian English teacher voice]',
   groqTtsMaxChars: Number(process.env.GROQ_TTS_MAX_CHARS ?? 200),
   openaiApiKey: process.env.OPENAI_API_KEY ?? '',
+  geminiApiKey: process.env.GEMINI_API_KEY ?? '',
+  geminiModel: process.env.GEMINI_MODEL ?? 'gemini-3.6-flash',
+  geminiFallbackModel: process.env.GEMINI_FALLBACK_MODEL ?? 'gemini-3.5-flash',
 
   azureSpeechKey: process.env.AZURE_SPEECH_KEY ?? '',
   azureSpeechRegion: process.env.AZURE_SPEECH_REGION ?? 'centralindia',
